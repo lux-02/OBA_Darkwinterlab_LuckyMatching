@@ -1,0 +1,44 @@
+# ───────── 의존성 / 빌드 산출물 ─────────
+**/node_modules/
+**/.next/
+**/dist/
+**/dist-ui/
+**/.turbo/
+**/*.tsbuildinfo
+**/out/
+**/build/
+
+# ───────── 파이썬 (saju-server) ─────────
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+*.pyc
+
+# ───────── 🔴 시크릿 (절대 커밋 금지) ─────────
+**/.env
+**/.env.local
+**/.env*.local
+**/*.pem
+# .env.example 은 키 없는 설정 안내용 → 포함
+!**/.env.example
+
+# ───────── 배포 / 툴 로컬 상태 ─────────
+**/.vercel/
+**/.ggui/
+**/.omc/
+**/.omx/
+**/.claude/settings.local.json
+
+# ───────── 백업 (모노레포 전환 시 보존용) ─────────
+**/.git.bak/
+
+# ───────── OS / 에디터 ─────────
+.DS_Store
+**/.DS_Store
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# ───────── 제출 제외: 내부 리포트 ─────────
+사주_운세_바이럴_트렌드_보고서.md
+럭키맥싱_종합리포트.md

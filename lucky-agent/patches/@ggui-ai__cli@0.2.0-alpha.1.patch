@@ -1,0 +1,102 @@
+diff --git a/dist/cli.js b/dist/cli.js
+index cecc3b286ac766b74061a2acc0186bba00563c47..8872aca4bdcaf29ddfa67963e33446eac2b55b60 100755
+--- a/dist/cli.js
++++ b/dist/cli.js
+@@ -575,6 +575,9 @@ async function runServeCommand(args) {
+                 ...(parsed.adminToken !== undefined
+                     ? { adminToken: parsed.adminToken }
+                     : {}),
++                ...(!parsed.ephemeral
++                    ? { persistentDir: getPersistentDir(plan.projectRoot) }
++                    : {}),
+                 ...(blueprintProvider ? { blueprintProvider } : {}),
+                 ...(uiRegistry ? { uiRegistry } : {}),
+                 ...(primitiveCatalogs.length > 0 ? { primitiveCatalogs } : {}),
+diff --git a/dist/mcp-backend.js b/dist/mcp-backend.js
+index 7475e1a57a094ed836522eeb1f63f0833d3feb52..cd22b08d5dffcce5dc83a676cb1e2044b56c8b31 100644
+--- a/dist/mcp-backend.js
++++ b/dist/mcp-backend.js
+@@ -47,10 +47,34 @@ import { createInstalledBlueprintsProvider, } from "@ggui-ai/mcp-server-handlers
+ import { createDeterministicPreviewEmitter } from "@ggui-ai/preview-a2ui/emitters";
+ import { randomUUID } from "node:crypto";
+ import { existsSync } from "node:fs";
++import { mkdir, open } from "node:fs/promises";
+ import { createServer as createNetServer } from "node:net";
+-import { join } from "node:path";
++import { dirname, join } from "node:path";
+ import { getCodeCacheDir, getCredentialsFile, getEmbeddingCacheDir } from "./paths.js";
+ import { readOrMintHexSecret } from "./persistent-secrets.js";
++class JsonlFileAuditSink {
++    filename;
++    tail = Promise.resolve();
++    constructor(filename) {
++        this.filename = filename;
++    }
++    record(entry) {
++        const next = this.tail.then(() => this.append(entry));
++        this.tail = next.catch(() => { });
++        return next;
++    }
++    async append(entry) {
++        await mkdir(dirname(this.filename), { recursive: true });
++        const handle = await open(this.filename, "a", 0o600);
++        try {
++            await handle.writeFile(`${JSON.stringify(entry)}\n`, "utf8");
++            await handle.sync();
++        }
++        finally {
++            await handle.close();
++        }
++    }
++}
+ /**
+  * Pick a free localhost TCP port by letting the OS assign one on a
+  * throwaway listener. Close the listener immediately and return the
+@@ -211,10 +235,15 @@ export function buildMcpServerBackend(opts) {
+     // restart. Absent dir = legacy ephemeral behavior.
+     let persistedWsTokenSecret;
+     let persistedRenderSignerSecret;
++    let persistedCsrfSecret;
+     if (opts.persistentDir !== undefined) {
+         persistedWsTokenSecret = readOrMintHexSecret(join(opts.persistentDir, "ws-token-secret.hex"));
+         persistedRenderSignerSecret = readOrMintHexSecret(join(opts.persistentDir, "render-signer-secret.hex"));
++        persistedCsrfSecret = readOrMintHexSecret(join(opts.persistentDir, "csrf-secret.hex"));
+     }
++    const audit = opts.persistentDir !== undefined
++        ? new JsonlFileAuditSink(join(opts.persistentDir, "audit.jsonl"))
++        : undefined;
+     // Resolve mcpInstructions: CLI flag wins over env var. Validated
+     // env-var values pass through to createGguiServer; invalid values
+     // fall through to the no-preset default with a one-line warning.
+@@ -362,6 +391,8 @@ export function buildMcpServerBackend(opts) {
+         ...(persistedRenderSignerSecret !== undefined
+             ? { renderSigning: { secret: persistedRenderSignerSecret } }
+             : {}),
++        ...(persistedCsrfSecret !== undefined ? { csrfSecret: persistedCsrfSecret } : {}),
++        ...(audit !== undefined ? { audit } : {}),
+         ...(resolvedMcpInstructions !== undefined ? { mcpInstructions: resolvedMcpInstructions } : {}),
+         // `--multi-tenant` flips the `/ggui/console/llm-keys` gate from
+         // admin-token to auth-adapter. Default scope derivation in the
+diff --git a/dist/serve-command.js b/dist/serve-command.js
+index 0f158548c491c81b3790f621b7752ebd042e6c04..ba35b9810979abdaa54dbcd7f52658bd5531716e 100644
+--- a/dist/serve-command.js
++++ b/dist/serve-command.js
+@@ -356,7 +356,8 @@ export async function runServe(opts) {
+         // need it can read `GET /ggui/console/info#pairing.pending`.
+         opts.stdout.write(`PAIR_CODE ${initialPair.code}\n`);
+     }
+-    if (backend.adminToken) {
++    const revealAdminToken = process.env.GGUI_HIDE_ADMIN_TOKEN !== "1";
++    if (backend.adminToken && revealAdminToken) {
+         // Machine-readable admin-token beacon — same stable-line contract
+         // as READY + PAIR_CODE. Harnesses pre-populate the console admin
+         // cookie by reading this off stdout.
+@@ -382,7 +383,7 @@ export async function runServe(opts) {
+                 pairCodeExpiresAt: initialPair.codeExpiresAt,
+             }
+             : {}),
+-        ...(backend.adminToken ? { adminToken: backend.adminToken } : {}),
++        ...(backend.adminToken && revealAdminToken ? { adminToken: backend.adminToken } : {}),
+         ...(opts.noLlmKey ? { noLlmKey: true } : {}),
+         ...(backend.embeddingModel ? { embeddingModel: backend.embeddingModel } : {}),
+     });

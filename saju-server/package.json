@@ -1,0 +1,15 @@
+{
+  "name": "saju-vercel-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:bridge": "esbuild scripts/manseryeok_bridge_entry.mjs --bundle --platform=browser --format=iife --outfile=saju_server/vendor/manseryeok_bridge.bundle.js"
+  },
+  "dependencies": {
+    "@fullstackfamily/manseryeok": "1.0.8"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
+

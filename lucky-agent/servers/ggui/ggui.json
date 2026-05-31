@@ -1,0 +1,15 @@
+{
+  "schema": "1",
+  "protocol": "draft-2026-05-23",
+  "app": {
+    "slug": "lucky-matching",
+    "name": "Lucky Matching"
+  },
+  "generation": {
+    "model": "openai:gpt-5.4-nano"
+  },
+  "theme": {
+    "preset": "indigo",
+    "mode": "dark"
+  }
+}

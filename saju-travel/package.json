@@ -1,0 +1,33 @@
+{
+  "name": "saju-travel",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "chart.js": "^4.4.1",
+    "d3-geo": "^3.1.1",
+    "html2canvas": "^1.4.1",
+    "next": "14.2.15",
+    "openai": "^6.39.1",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.3.1",
+    "react-simple-maps": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/d3-geo": "^3.1.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/react-simple-maps": "^3.0.6",
+    "playwright": "^1.60.0",
+    "topojson-client": "^3.1.0",
+    "typescript": "^5"
+  }
+}

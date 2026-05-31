@@ -1,0 +1,1267 @@
+@font-face {
+  font-family: "Cafe24PROUP";
+  src:
+    url("/fonts/Cafe24PROUP.woff2") format("woff2"),
+    url("/fonts/Cafe24PROUP.woff") format("woff");
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+:root {
+  --display: "Cafe24PROUP", "Pretendard", sans-serif;
+  --bg: #0a0a0c;
+  --card: #141417;
+  --card2: #1c1c21;
+  --line: #2a2a31;
+  --text: #f4f4f6;
+  --muted: #86868c;
+  --accent: #7c5cff;
+  --sans:
+    "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Noto Sans KR", sans-serif;
+  --mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, "Roboto Mono", monospace;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+strong {
+  font-weight: 800;
+}
+
+/* PC에서도 모바일 뷰 기준 — 좁은 폭 중앙 정렬 */
+.wrap {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 36px 20px 120px;
+}
+
+/* 스텝 전환 */
+.step {
+  animation: stepIn 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes stepIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 상단 스텝 바 (브랜드만 중앙 정렬) */
+.stepbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 18px;
+}
+.stepbar .brand-sm {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+/* 스텝 도트 */
+.stepdots {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+  margin: 8px 0 20px;
+}
+.stepdots .dot {
+  width: 20px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--line);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 20px;
+}
+.stepdots .dot.on {
+  width: 20px;
+  background: var(--accent);
+}
+
+/* 하단 공통 이전/다음 네비 */
+.stepnav {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+.nav-btn {
+  padding: 15px 18px;
+  border-radius: 13px;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+.nav-btn:active {
+  transform: translateY(1px);
+}
+.nav-btn.prev {
+  flex: 0 0 auto;
+  background: var(--card2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+.nav-btn.prev:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.nav-btn.prev.solo {
+  flex: 0 0 auto;
+}
+.nav-btn.next {
+  flex: 1;
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+}
+
+.nextcta {
+  width: 100%;
+  margin-top: 20px;
+  padding: 16px;
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--accent);
+}
+.nextcta:active {
+  transform: translateY(1px);
+}
+
+/* 분석 중 리빌 오버레이 */
+.analyzing {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(7, 7, 9, 0.92);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.analyzing-orb {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  border-radius: 999px;
+  background: conic-gradient(
+    from 0deg,
+    #7c5cff,
+    #2b6cb0,
+    #2f9e6e,
+    #e2483d,
+    #d4a017,
+    #7c5cff
+  );
+  animation: orbspin 1.1s linear infinite;
+  box-shadow: 0 0 44px rgba(124, 92, 255, 0.45);
+}
+.analyzing-orb::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  border-radius: 999px;
+  background: #07070a;
+  transform: translate(-50%, -50%);
+}
+.analyzing-msg {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+@keyframes orbspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* GGUI 임베드 대화 — 팝업 모달 (동적 UI 메인 + 하단 대화창) */
+.gchat-shell.open {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(7, 7, 9, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: stepIn 0.25s ease;
+}
+/* 백그라운드 preload: 화면 밖에서 정상 크기로 iframe만 미리 로드 */
+.gchat-shell.preload {
+  position: fixed;
+  left: -99999px;
+  top: 0;
+  width: 460px;
+  height: 86vh;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+}
+.gchat {
+  width: 100%;
+  max-width: 460px;
+  height: 86vh;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+.gchat-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.gchat-close {
+  background: var(--card2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+.gchat-close:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.gchat-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.gchat-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.gchat-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  background: var(--bg);
+}
+.gchat-hint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* 오방 지도 카드 내 '나와 맞는 곳' 심플 리스트 (병합) */
+.rec-list {
+  margin-top: 18px;
+  padding-top: 16px;
+}
+.rec-list-title {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  letter-spacing: -0.2px;
+}
+.rec-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+.rec-row:hover {
+  border-color: var(--accent);
+}
+.rec-row:active {
+  transform: translateY(1px);
+}
+.rec-places {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rec-el {
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.rec-go {
+  color: var(--muted);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Hero */
+.hero {
+  padding: 24px 0 36px;
+}
+.brand {
+  font-family: var(--display);
+  font-size: 58px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.02;
+}
+.tagline {
+  color: var(--muted);
+  font-size: 16px;
+  margin-top: 14px;
+  letter-spacing: -0.2px;
+}
+
+/* 모노 라벨 (ID카드 감성) */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+/* Card */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+}
+
+/* Segmented (양/음력) */
+.seg {
+  display: inline-flex;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 22px;
+}
+.seg button {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 9px;
+  padding: 9px 22px;
+  cursor: pointer;
+}
+.seg button.on {
+  background: var(--text);
+  color: #0a0a0c;
+}
+
+/* 생년월일 입력 */
+.dob {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 12px;
+}
+.dob .field {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 6px;
+}
+.dob label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.dob input {
+  width: 100%;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 16px 16px;
+  font-size: 30px;
+  font-weight: 800;
+  font-family: var(--sans);
+  letter-spacing: -0.5px;
+  text-align: center;
+}
+.dob input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 16px 0 0;
+}
+
+.sub-hint {
+  color: var(--muted);
+  font-size: 13px;
+  margin: -8px 0 16px;
+}
+
+.cta {
+  width: 100%;
+  margin-top: 22px;
+  padding: 18px;
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: #fff;
+  background: var(--accent);
+}
+.cta:active {
+  transform: translateY(1px);
+}
+.cta:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* 사주명식 */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.pillar {
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 8px;
+  text-align: center;
+}
+.pillar .role {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.pillar .hanja {
+  font-size: 34px;
+  font-weight: 800;
+  margin: 6px 0 2px;
+}
+.pillar .hangul {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* 강약·용신 statement */
+.stat {
+  margin-top: 22px;
+}
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.stat-big {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  margin: 14px 0 6px;
+}
+.stat-big strong {
+  color: var(--accent);
+}
+.stat-sub {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* 일간 정체성 (너의 타입) */
+.persona {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 16px 0;
+  padding: 16px 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(124, 92, 255, 0.12),
+    rgba(124, 92, 255, 0.04)
+  );
+  border: 1px solid rgba(124, 92, 255, 0.28);
+  border-radius: 16px;
+}
+.persona-emoji {
+  font-size: 34px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.persona-body {
+  min-width: 0;
+}
+.persona-tag {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: -0.2px;
+}
+.persona-tag strong {
+  color: var(--accent);
+  font-weight: 800;
+}
+.persona-line {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  line-height: 1.35;
+  margin-top: 4px;
+}
+
+/* 오늘의 예보 (일간 운세 카드) */
+.forecast {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.forecast.busy {
+  opacity: 0.45;
+  pointer-events: none;
+}
+.fc-spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.orb-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 4px solid rgba(124, 92, 255, 0.25);
+  border-top-color: var(--accent);
+  animation: orbspin 0.8s linear infinite;
+}
+.fc-top {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.fc-top-r {
+  min-width: 0;
+}
+.fc-verdict {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+.fc-sub2 {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.fc-god {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.fc-god b {
+  color: var(--text);
+  font-weight: 800;
+}
+.fc-head {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  line-height: 1.55;
+  margin: 16px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.fc-rec {
+  font-size: 13px;
+  color: var(--accent);
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+/* 지역 카드 */
+.section-label {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  margin-bottom: 16px;
+}
+.regions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.region {
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+}
+.region .top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.region .el {
+  font-size: 17px;
+  font-weight: 800;
+}
+.region .dir {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.region .terrain {
+  font-size: 14px;
+  margin: 6px 0 8px;
+  line-height: 1.5;
+}
+.region .because {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+
+/* 추천 지역 카드 — 지역명 강조 + 오행 일러스트 */
+.region-rec .rr-head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.region-rec .rr-icon {
+  flex: 0 0 auto;
+}
+.region-rec .rr-titles {
+  min-width: 0;
+}
+.region-rec .rr-places {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+}
+.region-rec .rr-sub {
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-top: 3px;
+  letter-spacing: -0.2px;
+}
+.region-rec .because {
+  margin-top: 12px;
+}
+.region-rec .cats {
+  margin-top: 10px;
+}
+
+/* 욕망별 맞춤 추천 — 5개 한눈에 */
+.desire-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.desire-card {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  text-align: left;
+  width: 100%;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 13px 14px;
+  cursor: pointer;
+  font-family: var(--sans);
+}
+.desire-card:hover {
+  border-color: var(--accent);
+}
+.desire-card:active {
+  transform: translateY(1px);
+}
+.desire-card .dc-icon {
+  flex: 0 0 auto;
+}
+.desire-card .dc-body {
+  flex: 1;
+  min-width: 0;
+}
+.desire-card .dc-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.desire-card .dc-label {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+.desire-card .dc-el {
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.desire-card .dc-why {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+.desire-card .dc-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 7px;
+}
+.desire-card .dc-region {
+  font-size: 12px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.desire-card .dc-go {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* 로고 아래 히어로 훅 (날짜 + 떠나는 거 어때?) */
+.bighook {
+  margin-top: 18px;
+  font-family: var(--display);
+}
+/* 날짜 텍스트 자체가 클릭형 — 별도 캘린더 버튼 없이 일정 변경 */
+.bigdate-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  line-height: 1.3;
+  color: var(--text);
+  margin-bottom: 16px;
+  border-bottom: 2px solid white;
+}
+.bigdate-inline:hover {
+  color: var(--accent);
+}
+.bigdate-inline .cal-caret {
+  font-size: 17px;
+  color: fff;
+  transform: translateY(1px);
+}
+@media (max-width: 380px) {
+  .bigdate-inline {
+    font-size: 25px;
+  }
+}
+/* 일간 운세 날짜 선택 — 화면 너비 꽉 채움 */
+.datebar {
+  margin-bottom: 14px;
+  position: relative;
+}
+.bigdate {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 14px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.bigdate:hover {
+  border-color: var(--accent);
+}
+.bigline {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  line-height: 1.25;
+}
+.bigline strong {
+  color: var(--accent);
+}
+@media (max-width: 380px) {
+  .bigline {
+    font-size: 25px;
+  }
+}
+.region .places {
+  font-size: 13px;
+  color: var(--muted);
+}
+.region .cats {
+  margin-top: 10px;
+}
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+  margin: 0 5px 5px 0;
+}
+.products {
+  margin-top: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.products .title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.product {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px;
+  margin-bottom: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+.product .thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--card2);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.product .pinfo {
+  flex: 1;
+  min-width: 0;
+}
+.product .pname {
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.product .pmeta {
+  font-size: 11px;
+  color: var(--muted);
+}
+.mock-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  padding: 1px 5px;
+  letter-spacing: 0.05em;
+}
+
+.avoid .region {
+  opacity: 0.55;
+}
+.muted {
+  color: var(--muted);
+}
+.loading {
+  text-align: center;
+  color: var(--muted);
+  padding: 40px;
+  font-size: 14px;
+}
+.err {
+  color: #ff8a80;
+  text-align: center;
+  padding: 16px;
+  font-size: 14px;
+}
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+  margin-top: 36px;
+  font-family: var(--mono);
+  letter-spacing: 0.03em;
+}
+
+/* 작은 보조 CTA (상품 전체보기 등) */
+.nextcta.sm {
+  font-size: 14px;
+  padding: 13px;
+  margin-top: 14px;
+  background: var(--card2);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+/* 전용 상품 추천 페이지 (/trips) */
+.trip-hero {
+  text-align: center;
+  padding: 22px 0 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.trip-hero-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  margin-top: 10px;
+}
+.trip-hero-sub {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 6px 0 0;
+  max-width: 30ch;
+}
+.trip-region {
+  margin-bottom: 14px;
+}
+.trip-region .el {
+  font-size: 18px;
+  font-weight: 800;
+}
+.trip-products {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.trip-product {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+.trip-product:active {
+  transform: translateY(1px);
+}
+.trip-thumb {
+  width: 92px;
+  height: 92px;
+  flex: 0 0 92px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.trip-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.trip-thumb-emoji {
+  font-size: 38px;
+}
+.trip-pinfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+}
+.trip-pname {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+}
+.trip-pmeta {
+  font-size: 13px;
+  color: var(--muted);
+}
+.trip-cta {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+@media (max-width: 560px) {
+  .brand {
+    font-size: 44px;
+  }
+  .regions {
+    grid-template-columns: 1fr;
+  }
+  .dob input {
+    font-size: 24px;
+    padding: 14px 10px;
+  }
+}
+
+/* STEP2 헤드라인 추천지 — 타자기 효과 (한 글자씩 작성/삭제 + 깜빡이는 커서) */
+.bigplace-type {
+  color: var(--accent);
+  white-space: nowrap;
+}
+.type-caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.92em;
+  margin-left: 3px;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: caretBlink 0.9s steps(1, end) infinite;
+}
+@keyframes caretBlink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* 랜딩 일러스트 아이콘 가로 나열 (장식) */
+.hero-icons {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 22px;
+}
+.hero-icon {
+  opacity: 0;
+  animation: heroIconIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.hero-icon:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.hero-icon:nth-child(2) {
+  animation-delay: 0.13s;
+}
+.hero-icon:nth-child(3) {
+  animation-delay: 0.21s;
+}
+.hero-icon:nth-child(4) {
+  animation-delay: 0.29s;
+}
+.hero-icon:nth-child(5) {
+  animation-delay: 0.37s;
+}
+@keyframes heroIconIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 워드마크 → 랜딩 링크 버튼 (외형은 텍스트 그대로) */
+.brand-sm-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+/* 날짜 표시 + 투명 date input 오버레이 (모바일 사파리 네이티브 피커) */
+.bigdate-wrap {
+  position: relative;
+  display: inline-block;
+}
+.bigdate-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+/* iOS 기본 date placeholder/스피너 숨김 (오버레이라 보일 필요 없음) */
+.bigdate-input::-webkit-date-and-time-value {
+  text-align: left;
+}
+.bigdate-input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* 모션-in: 운 게이지 호 드로우인 */
+.gauge-arc {
+  animation: gaugeDraw 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes gaugeDraw {
+  from {
+    stroke-dashoffset: var(--gauge-len);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* 모션-in: 오행 레이더 폴리곤 중심에서 확대 */
+.radar-data {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: radarGrow 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes radarGrow {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 모션-in: 밸런스 미터 포인터 슬라이드 */
+.balance-pointer {
+  animation: balanceSlide 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes balanceSlide {
+  from {
+    left: 50% !important;
+    opacity: 0;
+  }
+  to {
+    left: var(--balance-pct);
+    opacity: 1;
+  }
+}
+
+/* 공유 카드 단독 페이지 (STEP 5) */
+.share-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.share-step-title {
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-align: center;
+  margin: 6px 0 4px;
+}
+.share-step-sub {
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: -0.2px;
+}

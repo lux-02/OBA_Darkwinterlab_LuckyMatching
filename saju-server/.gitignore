@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+.pytest_cache/
+node_modules/
+build/
+*.egg-info/
+saju_server/vendor/manseryeok_bridge.bundle.js
+.omx/
+
+.vercel

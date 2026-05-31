@@ -1,0 +1,116 @@
+diff --git a/dist/adapters/generation-dispatch.js b/dist/adapters/generation-dispatch.js
+index 13399110ebb0c00ebaad6dce4deb7c6d0700d282..bf7dc579ad85d99529101fce5c36c0435ffa3f39 100644
+--- a/dist/adapters/generation-dispatch.js
++++ b/dist/adapters/generation-dispatch.js
+@@ -2231,6 +2231,18 @@ ${errorDetail}`,
+         line: lineNum
+       });
+     }
++    if (/\bsrc\s*=\s*(?:["'`{][^}\n]*?)?https?:\/\//i.test(line) || /\bbackgroundImage\s*:\s*["'`]https?:\/\//i.test(line) || /\burl\s*\(\s*["']?https?:\/\//i.test(line)) {
++      issues.push({
++        tier: 0,
++        result: "fail",
++        category: "security",
++        subcategory: "external-asset-url",
++        severity: "critical",
++        description: "External image or icon URLs are forbidden because generated UIs must remain self-contained.",
++        fix: "Remove the external asset URL. Use text, CSS, an inline SVG, or an emoji instead.",
++        line: lineNum
++      });
++    }
+     const trimmedLine = line.trim();
+     if (trimmedLine.startsWith("//") || trimmedLine.startsWith("*")) continue;
+     const importMatch = trimmedLine.match(/import\s+.*from\s+['"]([^'"]+)['"]/);
+diff --git a/dist/adapters/index.js b/dist/adapters/index.js
+index ab6ac52b5e94e8d816fc845d009ab91a479bc758..f591b2d3cd6cd2693ef85664f421ea501d83cc8d 100644
+--- a/dist/adapters/index.js
++++ b/dist/adapters/index.js
+@@ -195020,6 +195020,9 @@ async function runSelfChecks(code, contract) {
+     if (/\bfetch\s*\(/.test(line)) {
+       issues.push({ check: "security", line: lineNum, message: "fetch() is forbidden \u2014 use props for data", fix: "Remove fetch() and pass data via props" });
+     }
++    if (/\bsrc\s*=\s*(?:["'`{][^}\n]*?)?https?:\/\//i.test(line) || /\bbackgroundImage\s*:\s*["'`]https?:\/\//i.test(line) || /\burl\s*\(\s*["']?https?:\/\//i.test(line)) {
++      issues.push({ check: "security", line: lineNum, message: "External image or icon URLs are forbidden because generated UIs must remain self-contained.", fix: "Remove the external asset URL. Use text, CSS, an inline SVG, or an emoji instead." });
++    }
+     const importMatch = line.match(/import\s+.*from\s+['"]([^'"]+)['"]/);
+     if (importMatch) {
+       const pkg = importMatch[1];
+diff --git a/dist/check/index.js b/dist/check/index.js
+index 2191065a9a3568bf7c5f4fce78fd4539af079def..24f03481faccfda71176b3cbadbecc188493968d 100644
+--- a/dist/check/index.js
++++ b/dist/check/index.js
+@@ -1102,6 +1102,18 @@ ${errorDetail}`,
+         line: lineNum
+       });
+     }
++    if (/\bsrc\s*=\s*(?:["'`{][^}\n]*?)?https?:\/\//i.test(line) || /\bbackgroundImage\s*:\s*["'`]https?:\/\//i.test(line) || /\burl\s*\(\s*["']?https?:\/\//i.test(line)) {
++      issues.push({
++        tier: 0,
++        result: "fail",
++        category: "security",
++        subcategory: "external-asset-url",
++        severity: "critical",
++        description: "External image or icon URLs are forbidden because generated UIs must remain self-contained.",
++        fix: "Remove the external asset URL. Use text, CSS, an inline SVG, or an emoji instead.",
++        line: lineNum
++      });
++    }
+     const trimmedLine = line.trim();
+     if (trimmedLine.startsWith("//") || trimmedLine.startsWith("*")) continue;
+     const importMatch = trimmedLine.match(/import\s+.*from\s+['"]([^'"]+)['"]/);
+diff --git a/dist/coding-agent/index.js b/dist/coding-agent/index.js
+index 0bf4548cd7a74c7cbe3aa8130478fd216b22d137..7bcdc27efda430f6e5cce15223e543de9c9aa62f 100644
+--- a/dist/coding-agent/index.js
++++ b/dist/coding-agent/index.js
+@@ -1519,6 +1519,18 @@ ${errorDetail}`,
+         line: lineNum
+       });
+     }
++    if (/\bsrc\s*=\s*(?:["'`{][^}\n]*?)?https?:\/\//i.test(line) || /\bbackgroundImage\s*:\s*["'`]https?:\/\//i.test(line) || /\burl\s*\(\s*["']?https?:\/\//i.test(line)) {
++      issues.push({
++        tier: 0,
++        result: "fail",
++        category: "security",
++        subcategory: "external-asset-url",
++        severity: "critical",
++        description: "External image or icon URLs are forbidden because generated UIs must remain self-contained.",
++        fix: "Remove the external asset URL. Use text, CSS, an inline SVG, or an emoji instead.",
++        line: lineNum
++      });
++    }
+     const trimmedLine = line.trim();
+     if (trimmedLine.startsWith("//") || trimmedLine.startsWith("*")) continue;
+     const importMatch = trimmedLine.match(/import\s+.*from\s+['"]([^'"]+)['"]/);
+diff --git a/dist/index.js b/dist/index.js
+index 83e9923baab0342ba5d699f91825c9fa367426e8..bd0cd8c3f1e119f909b3b8747d5fb042d6c1adae 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -194913,6 +194913,18 @@ ${errorDetail}`,
+         line: lineNum
+       });
+     }
++    if (/\bsrc\s*=\s*(?:["'`{][^}\n]*?)?https?:\/\//i.test(line) || /\bbackgroundImage\s*:\s*["'`]https?:\/\//i.test(line) || /\burl\s*\(\s*["']?https?:\/\//i.test(line)) {
++      issues.push({
++        tier: 0,
++        result: "fail",
++        category: "security",
++        subcategory: "external-asset-url",
++        severity: "critical",
++        description: "External image or icon URLs are forbidden because generated UIs must remain self-contained.",
++        fix: "Remove the external asset URL. Use text, CSS, an inline SVG, or an emoji instead.",
++        line: lineNum
++      });
++    }
+     const trimmedLine = line.trim();
+     if (trimmedLine.startsWith("//") || trimmedLine.startsWith("*")) continue;
+     const importMatch = trimmedLine.match(/import\s+.*from\s+['"]([^'"]+)['"]/);
+@@ -277742,6 +277754,9 @@ async function runSelfChecks(code, contract) {
+     if (/\bfetch\s*\(/.test(line)) {
+       issues.push({ check: "security", line: lineNum, message: "fetch() is forbidden \u2014 use props for data", fix: "Remove fetch() and pass data via props" });
+     }
++    if (/\bsrc\s*=\s*(?:["'`{][^}\n]*?)?https?:\/\//i.test(line) || /\bbackgroundImage\s*:\s*["'`]https?:\/\//i.test(line) || /\burl\s*\(\s*["']?https?:\/\//i.test(line)) {
++      issues.push({ check: "security", line: lineNum, message: "External image or icon URLs are forbidden because generated UIs must remain self-contained.", fix: "Remove the external asset URL. Use text, CSS, an inline SVG, or an emoji instead." });
++    }
+     const importMatch = line.match(/import\s+.*from\s+['"]([^'"]+)['"]/);
+     if (importMatch) {
+       const pkg = importMatch[1];

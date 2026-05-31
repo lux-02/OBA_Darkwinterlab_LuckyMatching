@@ -1,0 +1,263 @@
+[
+  {
+    "id": "lichun-before",
+    "request": {
+      "calendar_type": "solar",
+      "year": 1984,
+      "month": 2,
+      "day": 3,
+      "hour": 23,
+      "minute": 30,
+      "longitude": 126.978,
+      "utc_offset": 9,
+      "use_solar_time": true,
+      "early_zi_time": true
+    },
+    "expected": {
+      "authoritative_engine": "manseryeok",
+      "resolution": "service_engine",
+      "validation_matches": true,
+      "pillars": {
+        "year": "癸亥",
+        "month": "乙丑",
+        "day": "丁卯",
+        "hour": "辛亥"
+      }
+    }
+  },
+  {
+    "id": "lichun-after",
+    "request": {
+      "calendar_type": "solar",
+      "year": 1984,
+      "month": 2,
+      "day": 4,
+      "hour": 1,
+      "minute": 30,
+      "longitude": 126.978,
+      "utc_offset": 9,
+      "use_solar_time": true,
+      "early_zi_time": true
+    },
+    "expected": {
+      "authoritative_engine": "manseryeok",
+      "resolution": "service_engine",
+      "validation_matches": true,
+      "pillars": {
+        "year": "甲子",
+        "month": "丙寅",
+        "day": "戊辰",
+        "hour": "壬子"
+      }
+    }
+  },
+  {
+    "id": "solar-term-before-switch",
+    "request": {
+      "calendar_type": "solar",
+      "year": 2024,
+      "month": 2,
+      "day": 4,
+      "hour": 16,
+      "minute": 0,
+      "longitude": 126.978,
+      "utc_offset": 9,
+      "use_solar_time": true,
+      "early_zi_time": true
+    },
+    "expected": {
+      "authoritative_engine": "sajupy",
+      "resolution": "validator_fallback",
+      "validation_matches": false,
+      "pillars": {
+        "year": "甲辰",
+        "month": "乙丑",
+        "day": "戊戌",
+        "hour": "庚申"
+      }
+    }
+  },
+  {
+    "id": "solar-term-after-switch",
+    "request": {
+      "calendar_type": "solar",
+      "year": 2024,
+      "month": 2,
+      "day": 4,
+      "hour": 18,
+      "minute": 0,
+      "longitude": 126.978,
+      "utc_offset": 9,
+      "use_solar_time": true,
+      "early_zi_time": true
+    },
+    "expected": {
+      "authoritative_engine": "manseryeok",
+      "resolution": "service_engine",
+      "validation_matches": true,
+      "pillars": {
+        "year": "甲辰",
+        "month": "丙寅",
+        "day": "戊戌",
+        "hour": "辛酉"
+      }
+    }
+  },
+  {
+    "id": "zi-window-late-night",
+    "request": {
+      "calendar_type": "solar",
+      "year": 1990,
+      "month": 10,
+      "day": 10,
+      "hour": 23,
+      "minute": 30,
+      "longitude": 126.978,
+      "utc_offset": 9,
+      "use_solar_time": true,
+      "early_zi_time": true
+    },
+    "expected": {
+      "authoritative_engine": "manseryeok",
+      "resolution": "service_engine",
+      "validation_matches": true,
+      "pillars": {
+        "year": "庚午",
+        "month": "丙戌",
+        "day": "戊申",
+        "hour": "癸亥"
+      }
+    }
+  },
+  {
+    "id": "zi-window-after-midnight",
+    "request": {
+      "calendar_type": "solar",
+      "year": 1990,
+      "month": 10,
+      "day": 11,
+      "hour": 0,
+      "minute": 30,
+      "longitude": 126.978,
+      "utc_offset": 9,
+      "use_solar_time": true,
+      "early_zi_time": true
+    },
+    "expected": {
+      "authoritative_engine": "sajupy",
+      "resolution": "validator_fallback",
+      "validation_matches": false,
+      "pillars": {
+        "year": "庚午",
+        "month": "丙戌",
+        "day": "戊申",
+        "hour": "甲子"
+      }
+    }
+  },
+  {
+    "id": "overseas-los-angeles",
+    "request": {
+      "calendar_type": "solar",
+      "year": 1990,
+      "month": 10,
+      "day": 10,
+      "hour": 14,
+      "minute": 30,
+      "longitude": -118.2437,
+      "utc_offset": -8,
+      "use_solar_time": true,
+      "early_zi_time": true
+    },
+    "expected": {
+      "authoritative_engine": "manseryeok",
+      "resolution": "service_engine",
+      "validation_matches": true,
+      "pillars": {
+        "year": "庚午",
+        "month": "丙戌",
+        "day": "戊申",
+        "hour": "己未"
+      }
+    }
+  },
+  {
+    "id": "lunar-leap-month",
+    "request": {
+      "calendar_type": "lunar",
+      "year": 2023,
+      "month": 2,
+      "day": 1,
+      "hour": 10,
+      "minute": 30,
+      "is_leap_month": true,
+      "longitude": 126.978,
+      "utc_offset": 9,
+      "use_solar_time": true,
+      "early_zi_time": true
+    },
+    "expected": {
+      "authoritative_engine": "manseryeok",
+      "resolution": "service_engine",
+      "validation_matches": true,
+      "pillars": {
+        "year": "癸卯",
+        "month": "乙卯",
+        "day": "己卯",
+        "hour": "己巳"
+      }
+    }
+  },
+  {
+    "id": "minute-boundary-before",
+    "request": {
+      "calendar_type": "solar",
+      "year": 1990,
+      "month": 5,
+      "day": 15,
+      "hour": 13,
+      "minute": 31,
+      "longitude": 126.978,
+      "utc_offset": 9,
+      "use_solar_time": true,
+      "early_zi_time": true
+    },
+    "expected": {
+      "authoritative_engine": "manseryeok",
+      "resolution": "service_engine",
+      "validation_matches": true,
+      "pillars": {
+        "year": "庚午",
+        "month": "辛巳",
+        "day": "庚辰",
+        "hour": "壬午"
+      }
+    }
+  },
+  {
+    "id": "minute-boundary-after",
+    "request": {
+      "calendar_type": "solar",
+      "year": 1990,
+      "month": 5,
+      "day": 15,
+      "hour": 13,
+      "minute": 33,
+      "longitude": 126.978,
+      "utc_offset": 9,
+      "use_solar_time": true,
+      "early_zi_time": true
+    },
+    "expected": {
+      "authoritative_engine": "manseryeok",
+      "resolution": "service_engine",
+      "validation_matches": true,
+      "pillars": {
+        "year": "庚午",
+        "month": "辛巳",
+        "day": "庚辰",
+        "hour": "癸未"
+      }
+    }
+  }
+]

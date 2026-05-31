@@ -1,0 +1,25 @@
+{
+  "name": "@lucky-agent/mcp-saju",
+  "version": "0.0.1",
+  "description": "Lucky Matching 사주(만세력)·오방·욕망 추천 MCP 서버. get_saju / daily_forecast / recommend_by_desire / recommend_by_region.",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "lucky-mcp-saju": "./dist/index.js"
+  },
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -b",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.21.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,137 @@
+diff --git a/dist/in-memory/pending-event-consumer.js b/dist/in-memory/pending-event-consumer.js
+index fb4f26ad95517e75cf446787cb233b9c42d68475..9a5efd91f018cc06a1cfaa146a2635251bd5038b 100644
+--- a/dist/in-memory/pending-event-consumer.js
++++ b/dist/in-memory/pending-event-consumer.js
+@@ -21,6 +21,7 @@
+  * agent's long-poll loop terminates on the next consume.
+  */
+ import { PendingPipeNotFoundError, } from '../pending-event-consumer.js';
++const expiresAt = (now, ttlMs) => Math.min(Number.MAX_SAFE_INTEGER, now + ttlMs);
+ export class InMemoryPendingEventConsumer {
+     pipes = new Map();
+     /** Per-renderId mutex — `consumeAndClear` and `append` chain on
+@@ -35,7 +36,7 @@ export class InMemoryPendingEventConsumer {
+             const events = entry.events;
+             entry.events = [];
+             entry.lastActivityAt = Date.now();
+-            entry.expiresAt = entry.lastActivityAt + ttlMs;
++            entry.expiresAt = expiresAt(entry.lastActivityAt, ttlMs);
+             return { events, status: entry.status };
+         });
+     }
+@@ -60,7 +61,7 @@ export class InMemoryPendingEventConsumer {
+             events: [],
+             status: 'active',
+             lastActivityAt: now,
+-            expiresAt: now + ttlMs,
++            expiresAt: expiresAt(now, ttlMs),
+         });
+     }
+     /**
+diff --git a/dist/in-memory/render-store.js b/dist/in-memory/render-store.js
+index 17e861d9eabbd80d990a2155ca439eb2f78be07c..6c6ee05db1c5edbc9700be3323ee179145f03d9b 100644
+--- a/dist/in-memory/render-store.js
++++ b/dist/in-memory/render-store.js
+@@ -1,5 +1,6 @@
+ /** Sentinel for "effectively infinite" TTL — `Number.MAX_SAFE_INTEGER` ms. */
+ const EFFECTIVELY_INFINITE_TTL_MS = Number.MAX_SAFE_INTEGER;
++const expiresAt = (now, ttlMs) => Math.min(Number.MAX_SAFE_INTEGER, now + ttlMs);
+ export class InMemoryRenderStore {
+     buckets = new Map();
+     now;
+@@ -29,7 +30,7 @@ export class InMemoryRenderStore {
+             eventSequence: 0,
+             createdAt: t,
+             lastActivityAt: t,
+-            expiresAt: t + this.defaultTtlMs,
++            expiresAt: expiresAt(t, this.defaultTtlMs),
+         };
+         const stored = {
+             id,
+@@ -45,7 +46,7 @@ export class InMemoryRenderStore {
+             eventSequence: 0,
+             createdAt: t,
+             lastActivityAt: t,
+-            expiresAt: t + this.defaultTtlMs,
++            expiresAt: expiresAt(t, this.defaultTtlMs),
+             render: placeholder,
+         };
+         this.buckets.set(id, { stored, events: [], waiters: [] });
+@@ -144,7 +145,7 @@ export class InMemoryRenderStore {
+             eventSequence: 0,
+             createdAt: t,
+             lastActivityAt: t,
+-            expiresAt: t + this.defaultTtlMs,
++            expiresAt: expiresAt(t, this.defaultTtlMs),
+             render: incoming,
+         };
+         this.buckets.set(stored.id, {
+diff --git a/dist/sqlite/pending-event-consumer.js b/dist/sqlite/pending-event-consumer.js
+index e828c5125550228e3c8025d248eb9c7fd717b314..8b496f7bae07d30fe7d7b6d8b784ddde3825ead0 100644
+--- a/dist/sqlite/pending-event-consumer.js
++++ b/dist/sqlite/pending-event-consumer.js
+@@ -48,6 +48,7 @@
+  */
+ import Database from 'better-sqlite3';
+ import { PendingPipeNotFoundError, } from '../pending-event-consumer.js';
++const expiresAt = (now, ttlMs) => Math.min(Number.MAX_SAFE_INTEGER, now + ttlMs);
+ export class SqlitePendingEventConsumer {
+     db;
+     ownsDb;
+@@ -100,7 +101,7 @@ export class SqlitePendingEventConsumer {
+             const eventRows = this.stmts.selectEventsForPipe.all(renderId);
+             this.stmts.deleteEventsForPipe.run(renderId);
+             const t = this.now();
+-            this.stmts.updateActivity.run(t, t + ttlMs, renderId);
++            this.stmts.updateActivity.run(t, expiresAt(t, ttlMs), renderId);
+             return {
+                 events: eventRows.map((row) => parseEventJson(row.event_json)),
+                 status: pipe.status,
+@@ -125,7 +126,7 @@ export class SqlitePendingEventConsumer {
+     markCreated(renderId, ttlMs = Number.MAX_SAFE_INTEGER) {
+         const t = this.now();
+         // INSERT OR IGNORE — idempotent on re-mark.
+-        this.stmts.insertPipe.run(renderId, 'active', t, t + ttlMs);
++        this.stmts.insertPipe.run(renderId, 'active', t, expiresAt(t, ttlMs));
+     }
+     /** Inspector for tests: how many events are queued? */
+     pendingCount(renderId) {
+diff --git a/dist/sqlite/render-store.js b/dist/sqlite/render-store.js
+index 7ee84abd27f28f7087b996c4ada9fdeb735837af..b6112d60ea5a0fde66c1619db7afd00e841b5b93 100644
+--- a/dist/sqlite/render-store.js
++++ b/dist/sqlite/render-store.js
+@@ -55,6 +55,7 @@ import Database from 'better-sqlite3';
+ import { EventEmitter } from 'node:events';
+ /** Sentinel for "effectively infinite" TTL — `Number.MAX_SAFE_INTEGER` ms. */
+ const EFFECTIVELY_INFINITE_TTL_MS = Number.MAX_SAFE_INTEGER;
++const expiresAt = (now, ttlMs) => Math.min(Number.MAX_SAFE_INTEGER, now + ttlMs);
+ export class SqliteRenderStore {
+     db;
+     ownsDatabase;
+@@ -124,7 +125,7 @@ export class SqliteRenderStore {
+             eventSequence: 0,
+             createdAt: t,
+             lastActivityAt: t,
+-            expiresAt: t + this.defaultTtlMs,
++            expiresAt: expiresAt(t, this.defaultTtlMs),
+         };
+         const stored = {
+             id,
+@@ -140,7 +141,7 @@ export class SqliteRenderStore {
+             eventSequence: 0,
+             createdAt: t,
+             lastActivityAt: t,
+-            expiresAt: t + this.defaultTtlMs,
++            expiresAt: expiresAt(t, this.defaultTtlMs),
+             render: placeholder,
+         };
+         this.stmts.insertRender.run(stored.id, stored.appId, stored.userId ?? null, JSON.stringify(placeholder), stored.eventSequence, stored.createdAt, stored.lastActivityAt, stored.expiresAt, stored.endUserIdentity ? JSON.stringify(stored.endUserIdentity) : null, stored.themeId ?? null, stored.hostSession?.hostName ?? null, stored.hostSession?.hostSessionId ?? null);
+@@ -219,7 +220,7 @@ export class SqliteRenderStore {
+             eventSequence: 0,
+             createdAt: t,
+             lastActivityAt: t,
+-            expiresAt: t + this.defaultTtlMs,
++            expiresAt: expiresAt(t, this.defaultTtlMs),
+             render: incoming,
+         };
+         this.stmts.insertRender.run(stored.id, stored.appId, stored.userId ?? null, JSON.stringify(incoming), stored.eventSequence, stored.createdAt, stored.lastActivityAt, stored.expiresAt, stored.endUserIdentity ? JSON.stringify(stored.endUserIdentity) : null, stored.themeId ?? null, stored.hostSession?.hostName ?? null, stored.hostSession?.hostSessionId ?? null);
