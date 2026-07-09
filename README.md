@@ -10,7 +10,8 @@
 </p>
 
 <p align="center">
-  🔗 <b><a href="https://luckymatching.n2f.site">라이브 데모 — luckymatching.n2f.site</a></b>
+  🔗 <b><a href="https://luckymatching.app">서비스 바로가기 — luckymatching.app</a></b><br/>
+  <sub>해커톤(2026-05) 시점 스냅샷 데모: <a href="https://luckymatching.n2f.site">luckymatching.n2f.site</a></sub>
 </p>
 
 <p align="center">
@@ -117,7 +118,8 @@ pnpm dev                     # ggui·todo·agent·web 동시 기동
 
 | 서비스 | URL |
 |---|---|
-| 메인 (프론트) | https://luckymatching.n2f.site |
+| **현재 서비스 (고도화 중)** | https://luckymatching.app |
+| 해커톤 스냅샷 데모 (프론트) | https://luckymatching.n2f.site |
 | 사주 계산 API | https://saju-git-main-lux02s-projects.vercel.app |
 | GGUI 대화 (web) | https://web-production-33246.up.railway.app |
 
