@@ -348,11 +348,187 @@ strong {
   padding: 24px 0 36px;
 }
 .brand {
+  margin: 0; /* h1 기본 마진 리셋 (디자인 보존) */
   font-family: var(--display);
   font-size: 58px;
   font-weight: 800;
   letter-spacing: -1px;
   line-height: 1.02;
+}
+
+/* 스크린리더/검색엔진 전용 — 시각적으로는 숨김 (브랜드 한글명 노출용) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* OBA 공개 버전 안내 배너 */
+.open-edition {
+  position: relative;
+  margin: -10px 0 18px;
+  padding: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(124, 92, 255, 0.48);
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(124, 92, 255, 0.22),
+      transparent 42%
+    ),
+    var(--card);
+}
+.open-edition::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08),
+    transparent 45%
+  );
+}
+.open-edition-kicker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #d7ccff;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.open-edition h2 {
+  position: relative;
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+}
+.open-edition p {
+  position: relative;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.open-edition p strong {
+  color: var(--text);
+}
+.open-edition-actions {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+.open-edition-primary,
+.open-edition-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  text-decoration: none;
+}
+.open-edition-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.open-edition-secondary {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+.open-edition-primary:active,
+.open-edition-secondary:active {
+  transform: translateY(1px);
+}
+
+/* 랜딩 하단 소개/FAQ (크롤 가능 콘텐츠) */
+.seo-intro {
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.seo-h2 {
+  margin: 0 0 12px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+.seo-lead {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.seo-lead strong {
+  color: var(--text);
+}
+.seo-faq {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.seo-q {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  overflow: hidden;
+}
+.seo-q > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+.seo-q > summary::-webkit-details-marker {
+  display: none;
+}
+.seo-q > summary::after {
+  content: "+";
+  float: right;
+  color: var(--muted);
+  font-weight: 700;
+}
+.seo-q[open] > summary::after {
+  content: "−";
+}
+.seo-q > p {
+  margin: 0;
+  padding: 0 16px 16px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.seo-award {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-family: var(--mono);
+  letter-spacing: 0.02em;
 }
 .tagline {
   color: var(--muted);
@@ -833,7 +1009,7 @@ strong {
 }
 .bigdate-inline .cal-caret {
   font-size: 17px;
-  color: fff;
+  color: #fff;
   transform: translateY(1px);
 }
 @media (max-width: 380px) {

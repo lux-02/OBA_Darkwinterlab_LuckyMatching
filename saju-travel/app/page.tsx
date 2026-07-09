@@ -10,6 +10,8 @@ import ShareCard from "@/components/ShareCard";
 import Analyzing from "@/components/Analyzing";
 import ElementIcon from "@/components/ElementIcon";
 import GguiChat from "@/components/GguiChat";
+import SeoIntro from "@/components/SeoIntro";
+import { COMMERCIAL_SITE_URL } from "@/app/site-config";
 import { fetchSummary, fetchForecast } from "@/lib/saju";
 import { becauseLine } from "@/lib/explain";
 import { ELEMENT_COLOR, ELEMENT_REGIONS } from "@/lib/regions";
@@ -182,6 +184,28 @@ function StepNav({
         </button>
       )}
     </div>
+  );
+}
+
+function OpenEditionBanner() {
+  return (
+    <section className="open-edition" aria-labelledby="open-edition-title">
+      <div className="open-edition-kicker">OBA Hackathon 1위 공개 버전</div>
+      <h2 id="open-edition-title">여기는 럭키매칭의 오픈 에디션이에요</h2>
+      <p>
+        OBA(Open Source Alliance)에서 시작된 수상작은 계속 열어두고, 더 정교한
+        매칭·운세·커머스 기능은 <strong>Luckymatching.app</strong>에서
+        고도화하고 있어요.
+      </p>
+      <div className="open-edition-actions">
+        <a className="open-edition-primary" href={COMMERCIAL_SITE_URL}>
+          최신 버전 보기 →
+        </a>
+        <a className="open-edition-secondary" href="#open-edition-info">
+          공개 버전 설명
+        </a>
+      </div>
+    </section>
   );
 }
 
@@ -383,8 +407,7 @@ export default function Home() {
 
   function openCalendar() {
     const el = dateRef.current as
-      | (HTMLInputElement & { showPicker?: () => void })
-      | null;
+      (HTMLInputElement & { showPicker?: () => void }) | null;
     if (!el) return;
     try {
       el.showPicker ? el.showPicker() : el.focus();
@@ -476,16 +499,26 @@ export default function Home() {
       {step === 1 && (
         <div className="step" key="s1">
           <header className="hero">
-            <div className="brand">Lucky Matching</div>
+            <h1 className="brand">
+              Lucky Matching
+              <span className="sr-only"> 럭키매칭 — 사주 오행 여행 추천</span>
+            </h1>
             <div className="bighook">
               어디 갈지 고민 될땐 럭키매칭에게 물어봐!
             </div>
             <div className="hero-icons" aria-hidden="true">
               {(["목", "화", "토", "금", "수"] as const).map((el) => (
-                <ElementIcon key={el} element={el} size={34} className="hero-icon" />
+                <ElementIcon
+                  key={el}
+                  element={el}
+                  size={34}
+                  className="hero-icon"
+                />
               ))}
             </div>
           </header>
+
+          <OpenEditionBanner />
 
           <form className="card" onSubmit={onSubmit}>
             <div className="eyebrow">생년월일</div>
@@ -559,6 +592,8 @@ export default function Home() {
           </form>
 
           {error && <div className="err">앗, 뭔가 꼬였어: {error}</div>}
+
+          <SeoIntro />
         </div>
       )}
 
