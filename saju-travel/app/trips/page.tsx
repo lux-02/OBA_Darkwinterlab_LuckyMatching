@@ -105,7 +105,16 @@ function TripsInner() {
         <button type="button" className="nav-btn prev solo" onClick={() => router.back()} aria-label="돌아가기" title="돌아가기">←</button>
       </div>
 
-      <footer>AI가 생성한 참고용 결과예요 · 운세는 재미로만 봐주세요</footer>
+      <footer>
+        <p>AI가 생성한 참고용 결과예요 · 운세는 재미로만 봐주세요</p>
+        <p className="footer-company">
+          Darkwinterlab (다크윈터랩) · 대표 오윤석 ·{" "}
+          <a href="mailto:darkwinterlab@n2f.site">darkwinterlab@n2f.site</a> ·{" "}
+          <a href="https://n2f.site/company" rel="noopener noreferrer">
+            n2f.site/company
+          </a>
+        </p>
+      </footer>
     </main>
   );
 }
